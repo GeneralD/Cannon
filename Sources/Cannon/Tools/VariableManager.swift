@@ -1,24 +1,21 @@
+import Kebab
+import StringCase
 import SwiftCLI
 
-class VariableManager: ExpressibleByDictionaryLiteral {
+class VariableManager {
+	private let detector = CaseDetector()
+	private let converter = CaseConverter()
+	private let normalCase: MultiWordIdentifier = .camelCase
+
 	private var storage: [String : String] = [:]
 
-	required init(dictionaryLiteral elements: (String, String)...) {
-		storage = elements.reduce(into: [:]) { accum, pair in accum[pair.0] = pair.1 }
-	}
-
 	subscript(_ key: String) -> String {
-		get {
-			guard let value = storage.first(where: { $0.key == key })?.value else {
-				let input = Input.readLine(prompt: "Input a value for variable \(key): ")
-				storage[key] = input
-				return input
-			}
-			return value
+		let normalizedKey = converter.convert(text: key, to: normalCase)
+		guard let normalizedValue = storage.first(where: { $0.key == normalizedKey })?.value else {
+			let input = Input.readLine(prompt: "Input a value for variable \(normalizedKey): ")
+			storage[normalizedKey] = converter.convert(text: input, to: normalCase)
+			return self[key]
 		}
-
-		set {
-			storage[key] = newValue
-		}
+		return converter.convert(text: normalizedValue, from: normalCase, to: detector.detectCase(in: key))
 	}
 }

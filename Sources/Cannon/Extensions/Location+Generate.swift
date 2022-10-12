@@ -4,7 +4,7 @@ import Regex
 import SwiftCLI
 
 extension Location {
-	func gen(to outputPlace: Folder, config: TemplateConfig, variables: VariableManager = [:]) throws {
+	func gen(to outputPlace: Folder, config: TemplateConfig, variables: VariableManager = .init()) throws {
 		let replaced = try config.escapedDelimiters.reduce(name) { accum, delimiter in
 			// replace delimiter with value
 			let matcher = try Regex(pattern: "\(delimiter)(.+?)\(delimiter)", groupNames: "fill")
@@ -34,7 +34,7 @@ extension Location {
 }
 
 extension File {
-	func contents(templateConfig: TemplateConfig, variables: VariableManager = [:]) -> Data? {
+	func contents(templateConfig: TemplateConfig, variables: VariableManager = .init()) -> Data? {
 		guard let contents = try? readAsString(encodedAs: .utf8) else { return try? read() }
 		let replaced = try? templateConfig.escapedDelimiters.reduce(contents) { accum, delimiter in
 			let matcher = try Regex(pattern: "\(delimiter)(.+?)\(delimiter)", groupNames: "fill")

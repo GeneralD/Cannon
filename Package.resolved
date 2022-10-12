@@ -28,6 +28,15 @@
       }
     },
     {
+      "identity" : "kebab",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/eneko/Kebab.git",
+      "state" : {
+        "revision" : "abfb07b7fcf34d37afabcef8085b0d1cd4578742",
+        "version" : "1.1.0"
+      }
+    },
+    {
       "identity" : "regex",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/crossroadlabs/Regex",
