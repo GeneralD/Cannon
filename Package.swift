@@ -12,7 +12,6 @@ let package = Package(
 		.executable(name: "cannon", targets: ["Cannon"])
 	],
 	dependencies: [
-		.package(url: "https://github.com/generald/CollectionKit", branch: "master"),
 		.package(url: "https://github.com/gonzalezreal/DefaultCodable", from: "1.2.1"),
 		.package(url: "https://github.com/JohnSundell/Files", from: "4.2.0"),
 		.package(url: "https://github.com/eneko/Kebab.git", from: "1.1.0"),
@@ -24,7 +23,6 @@ let package = Package(
 		.executableTarget(
 			name: "Cannon",
 			dependencies: [
-				"CollectionKit",
 				"DefaultCodable",
 				"Files",
 				"Kebab",

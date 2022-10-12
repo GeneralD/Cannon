@@ -5,6 +5,10 @@ import SwiftCLI
 
 extension Location {
 	func gen(to outputPlace: Folder, config: TemplateConfig, variables: VariableManager = .init()) throws {
+		let isIgnored = config.ignore.compactMap { "^\($0)$".r }
+			.contains { $0.matches(name) }
+		guard !isIgnored else { return }
+
 		let replaced = try config.escapedDelimiters.reduce(name) { accum, delimiter in
 			// replace delimiter with value
 			let matcher = try Regex(pattern: "\(delimiter)(.+?)\(delimiter)", groupNames: "fill")
