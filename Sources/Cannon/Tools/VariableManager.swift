@@ -1,5 +1,4 @@
 import Kebab
-import StringCase
 import SwiftCLI
 
 class VariableManager {
