@@ -9,5 +9,9 @@ enum TemplateConstantDelimiters: DefaultValueProvider {
 }
 
 enum TemplateIgnore: DefaultValueProvider {
-	static let `default` = [".DS_Store", ".git"]
+	static let `default` = ["config.yml", "config.yaml", "config.json", ".DS_Store", ".git"]
+}
+
+enum TemplateRootDirectoryName: DefaultValueProvider {
+	static let `default`: String? = "$$Root Directory Name$$"
 }

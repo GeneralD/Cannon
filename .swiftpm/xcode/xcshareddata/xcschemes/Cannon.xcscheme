@@ -91,6 +91,10 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
+            argument = "gen"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "~/.ghq/github.com/GeneralD/project-template-hardhat-erc721a-upgradeable"
             isEnabled = "YES">
          </CommandLineArgument>
