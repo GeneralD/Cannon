@@ -21,7 +21,7 @@ class GenCommand: Command {
 		try configureArguments()
 
 		let config = loadConfig()
-		try inputFolder.gen(to: outputFolder, config: config)
+		try inputFolder.gen(to: outputFolder, config: config, variables: .init(), isRoot: true)
 	}
 }
 

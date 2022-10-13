@@ -4,13 +4,14 @@ import Regex
 import SwiftCLI
 
 extension Location {
-	func gen(to outputPlace: Folder, config: TemplateConfig, variables: VariableManager = .init()) throws {
+	func gen(to outputPlace: Folder, config: TemplateConfig, variables: VariableManager, isRoot: Bool = false) throws {
 		// check if the file is in ignore list
 		guard !config.ignore
 			.compactMap({ "^\($0)$".r })
 			.contains(where: { $0.matches(name) }) else { return }
 
-		let replaced = try replace(text: name, templateConfig: config, variables: variables)
+		let locationName = isRoot ? config.rootDirectoryName ?? name : name
+		let replaced = try replace(text: locationName, templateConfig: config, variables: variables)
 
 		switch self {
 		case let file as File:
@@ -19,11 +20,11 @@ extension Location {
 		case let folder as Folder:
 			let generatedFolder = try outputPlace.createSubfolder(named: replaced)
 			// generate folders recursively
-			try folder.subfolders.forEach { folder in
+			try folder.subfolders.includingHidden.forEach { folder in
 				try folder.gen(to: generatedFolder, config: config, variables: variables)
 			}
 			// generate files recursively
-			try folder.files.forEach { file in
+			try folder.files.includingHidden.forEach { file in
 				try file.gen(to: generatedFolder, config: config, variables: variables)
 			}
 
@@ -33,7 +34,7 @@ extension Location {
 	}
 }
 
-extension File {
+private extension File {
 	func contents(templateConfig: TemplateConfig, variables: VariableManager = .init()) -> Data? {
 		guard let contents = try? readAsString(encodedAs: .utf8) else { return try? read() }
 		let replaced = try? replace(text: contents, templateConfig: templateConfig, variables: variables)

@@ -91,7 +91,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "~/Desktop/__SYMBOL__"
+            argument = "~/.ghq/github.com/GeneralD/project-template-hardhat-erc721a-upgradeable"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

@@ -3,11 +3,12 @@ import DefaultCodable
 import Regex
 
 struct TemplateConfig: Codable, Equatable {
-	static let empty: Self = .init()
+	static let empty: Self = .init(rootDirectoryName: nil)
 
 	@Default<TemplateDelimiters> var delimiters: [String]
 	@Default<TemplateConstantDelimiters> var constantDelimiters: [String]
 	@Default<TemplateIgnore> var ignore: [String]
+	let rootDirectoryName: String?
 }
 
 extension TemplateConfig {
