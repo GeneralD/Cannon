@@ -91,7 +91,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "~/Desktop/__foo__folder__foo__"
+            argument = "~/Desktop/__SYMBOL__"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

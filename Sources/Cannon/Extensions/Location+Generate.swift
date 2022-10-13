@@ -5,28 +5,24 @@ import SwiftCLI
 
 extension Location {
 	func gen(to outputPlace: Folder, config: TemplateConfig, variables: VariableManager = .init()) throws {
-		let isIgnored = config.ignore.compactMap { "^\($0)$".r }
-			.contains { $0.matches(name) }
-		guard !isIgnored else { return }
+		// check if the file is in ignore list
+		guard !config.ignore
+			.compactMap({ "^\($0)$".r })
+			.contains(where: { $0.matches(name) }) else { return }
 
-		let replaced = try config.escapedDelimiters.reduce(name) { accum, delimiter in
-			// replace delimiter with value
-			let matcher = try Regex(pattern: "\(delimiter)(.+?)\(delimiter)", groupNames: "fill")
-			return matcher.replaceAll(in: accum) { match in
-				guard let varName = match.group(named: "fill") else { return "" }
-				return variables[varName]
-			}
-		}
+		let replaced = try replace(text: name, templateConfig: config, variables: variables)
+
 		switch self {
 		case let file as File:
 			try outputPlace.createFile(named: replaced, contents: file.contents(templateConfig: config, variables: variables))
+
 		case let folder as Folder:
 			let generatedFolder = try outputPlace.createSubfolder(named: replaced)
 			// generate folders recursively
 			try folder.subfolders.forEach { folder in
 				try folder.gen(to: generatedFolder, config: config, variables: variables)
 			}
-			// generate files
+			// generate files recursively
 			try folder.files.forEach { file in
 				try file.gen(to: generatedFolder, config: config, variables: variables)
 			}
@@ -40,13 +36,15 @@ extension Location {
 extension File {
 	func contents(templateConfig: TemplateConfig, variables: VariableManager = .init()) -> Data? {
 		guard let contents = try? readAsString(encodedAs: .utf8) else { return try? read() }
-		let replaced = try? templateConfig.escapedDelimiters.reduce(contents) { accum, delimiter in
-			let matcher = try Regex(pattern: "\(delimiter)(.+?)\(delimiter)", groupNames: "fill")
-			return matcher.replaceAll(in: accum) { match in
-				guard let varName = match.group(named: "fill") else { return "" }
-				return variables[varName]
-			}
-		}
+		let replaced = try? replace(text: contents, templateConfig: templateConfig, variables: variables)
 		return (replaced ?? contents).data(using: .utf8)
+	}
+}
+
+private func replace(text: String, templateConfig: TemplateConfig, variables: VariableManager = .init()) throws -> String {
+	return try templateConfig.escapedAllDelimiters.reduce(text) { accum, delimiter in
+		let matcher = try Regex(pattern: "\(delimiter.chars)([a-zA-Z\\d \\-_\\|]+?)\(delimiter.chars)", groupNames: "fill")
+		let fun = delimiter.isConstant ? variables.constantValue(for:) : variables.value(for:)
+		return matcher.replaceAll(in: accum) { match in match.group(named: "fill").map(fun) ?? "" }
 	}
 }
