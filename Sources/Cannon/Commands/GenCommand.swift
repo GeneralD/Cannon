@@ -55,7 +55,7 @@ private extension GenCommand {
 		guard let file = inputFolder.files.first(where: { $0.nameExcludingExtension == "config" }) else {
 			stderr <<< "Config file not found in \(inputFolder.name)"
 			stdout <<< "But still ok! We can continue processing..."
-			return .default
+			return .init()
 		}
 
 		do {
@@ -67,12 +67,12 @@ private extension GenCommand {
 			default:
 				stderr <<< "Incompatible file extension: \(file.name)"
 				stdout <<< "But still ok! We can continue processing..."
-				return .default
+				return .init()
 			}
 		} catch {
 			stderr <<< "No valid config file!"
 			stdout <<< "But still ok! We can continue processing..."
-			return .default
+			return .init()
 		}
 	}
 }
