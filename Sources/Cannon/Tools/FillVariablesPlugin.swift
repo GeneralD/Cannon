@@ -5,8 +5,8 @@ import Regex
 class FillVariablesPlugin: GeneratorPlugin {
 	private let matchGroupName = "fill"
 
-	private let config: TemplateConfig
 	private let variables: VariableManager
+	private let config: TemplateConfig
 
 	private lazy var variableMatchers = config.delimiters.compactMap(variableMatcher(from:))
 	private lazy var constantVariableMatchers: [Regex] = config.constantDelimiters.compactMap(variableMatcher(from:))
@@ -27,8 +27,10 @@ class FillVariablesPlugin: GeneratorPlugin {
 		let replaced = try replace(text: text)
 		return replaced.data(using: .utf8) ?? piped
 	}
+}
 
-	private func replace(text: String) throws -> String {
+private extension FillVariablesPlugin {
+	func replace(text: String) throws -> String {
 		replacers.reduce(text) { accum, tuple in
 			let (matcher, valueFor) = tuple
 			return matcher.replaceAll(in: accum) { match in
