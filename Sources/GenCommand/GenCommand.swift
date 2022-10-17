@@ -1,9 +1,15 @@
-import AppKit
 import Files
+import Foundation
+import FillVariablesPlugin
+import GenCommon
+import IgnorePlugin
+import SkipPlugin
 import SwiftCLI
 import Yams
 
-class GenCommand: Command {
+public class GenCommand: Command {
+
+	public init() {}
 
 	// MARK: - Arguments
 
@@ -15,17 +21,18 @@ class GenCommand: Command {
 
 	// MARK: - Command Implementations
 
-	let name = "gen"
+	public let name = "gen"
 
-	func execute() throws {
+	public func execute() throws {
 		try configureArguments()
 
 		let config = loadConfig()
-		let variables = VariableManager()
+		let reader = PromptValueReader()
 
 		try inputFolder.gen(to: outputFolder, isRoot: true, plugins: [
 			IgnorePlugin(config: config),
-			FillVariablesPlugin(config: config, variables: variables),
+			SkipPlugin(config: config, reader: reader),
+			FillVariablesPlugin(config: config, reader: reader),
 		])
 	}
 }

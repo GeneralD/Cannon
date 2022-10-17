@@ -9,7 +9,7 @@ let package = Package(
 		.macOS(.v12),
 	],
 	products: [
-		.executable(name: "cannon", targets: ["Cannon"])
+		.executable(name: "cannon", targets: ["Cannon"]),
 	],
 	dependencies: [
 		.package(url: "https://github.com/gonzalezreal/DefaultCodable", from: "1.2.1"),
@@ -23,14 +23,68 @@ let package = Package(
 		.executableTarget(
 			name: "Cannon",
 			dependencies: [
-				"DefaultCodable",
+				"GenCommand",
+			]),
+		.target(
+			name: "GenCommand",
+			dependencies: [
+				// internal
+				"GenCommon",
+				"FillVariablesPlugin",
+				"IgnorePlugin",
+				"SkipPlugin",
+				"ValueReader",
+				// libs
+				"Files",
+				"SwiftCLI",
+				"Yams",
+			]),
+		.target(
+			name: "FillVariablesPlugin",
+			dependencies: [
+				// internal
+				"GenCommon",
+				"ValueReader",
+				// libs
 				"Files",
 				"Kebab",
+			]),
+		.target(
+			name: "IgnorePlugin",
+			dependencies: [
+				// internal
+				"GenCommon",
+				// libs
 				"Regex",
-				"SwiftCLI",
-				"Yams"]),
+			]),
+		.target(
+			name: "SkipPlugin",
+			dependencies: [
+				// internal
+				"GenCommon",
+				"ValueReader",
+				// libs
+				"Regex",
+			]),
+		.target(
+			name: "GenCommon",
+			dependencies: [
+				// libs
+				"DefaultCodable",
+				"Files",
+			]),
+		.target(
+			name: "ValueReader"
+		),
 		.testTarget(
-			name: "CannonTests",
-			dependencies: ["Cannon"]),
+			name: "SkipPluginTests",
+			dependencies: [
+				// internal
+				"GenCommon",
+				"SkipPlugin",
+				"ValueReader",
+				// libs
+				"Yams",
+			]),
 	]
 )

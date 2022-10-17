@@ -1,5 +1,5 @@
 import Kebab
-import SwiftCLI
+import ValueReader
 
 class VariableManager {
 	private let detector = CaseDetector()
@@ -9,10 +9,16 @@ class VariableManager {
 	private var storage: [String : String] = [:]
 	private var constantStorage: [String : String] = [:]
 
+	private let reader: ValueReader
+
+	init(reader: ValueReader) {
+		self.reader = reader
+	}
+
 	func value(for key: String) -> String {
 		let normalizedKey = converter.convert(text: key, to: normalCase)
 		guard let storedValue = storage.first(where: { $0.key == normalizedKey })?.value else {
-			let input = Input.readLine(prompt: "Input a value for variable \(normalizedKey): ")
+			let input = reader.read(message: "Input a value for variable \(normalizedKey): ")
 			storage[normalizedKey] = converter.convert(text: input, to: normalCase)
 			return value(for: key)
 		}
@@ -21,7 +27,7 @@ class VariableManager {
 
 	func constantValue(for key: String) -> String {
 		guard let storedValue = constantStorage.first(where: { $0.key == key })?.value else {
-			constantStorage[key] = Input.readLine(prompt: "Input a value for \(key): ")
+			constantStorage[key] = reader.read(message: "Input a value for \(key): ")
 			return constantValue(for: key)
 		}
 		return storedValue
