@@ -14,7 +14,7 @@ let package = Package(
 	dependencies: [
 		.package(url: "https://github.com/gonzalezreal/DefaultCodable", from: "1.2.1"),
 		.package(url: "https://github.com/JohnSundell/Files", from: "4.2.0"),
-		.package(url: "https://github.com/eneko/Kebab.git", from: "1.1.0"),
+		.package(url: "https://github.com/eneko/Kebab", from: "1.1.0"),
 		.package(url: "https://github.com/crossroadlabs/Regex", from: "1.2.0"),
 		.package(url: "https://github.com/jakeheis/SwiftCLI", from: "6.0.3"),
 		.package(url: "https://github.com/jpsim/Yams", from: "5.0.1"),
