@@ -1,5 +1,6 @@
 import Foundation
 import GenCommon
+import TemplateConfig
 import ValueReader
 import XCTest
 import Yams
@@ -7,16 +8,29 @@ import Yams
 
 final class SkipPluginTests: XCTestCase {
 
-	func testSkipCode() throws {
-		let configText = """
----
-skipDelimiters:
-  - "////"
-"""
-		let data = configText.data(using: .utf8)!
-		let config = try YAMLDecoder().decode(TemplateConfig.self, from: data)
-		XCTAssertEqual(config.skipDelimiters.first, "////")
+	struct TestConfig: TemplateConfig {
+		let delimiters: [String]
+		let constantDelimiters: [String]
+		let skipDelimiters: [String]
+		let ignore: [String]
+		let rootDirectoryName: String?
 
+		init(
+			delimiters: [String] = [],
+			constantDelimiters: [String] = [],
+			skipDelimiters: [String] = [],
+			ignore: [String] = [],
+			rootDirectoryName: String? = nil) {
+				self.delimiters = delimiters
+				self.constantDelimiters = constantDelimiters
+				self.skipDelimiters = skipDelimiters
+				self.ignore = ignore
+				self.rootDirectoryName = rootDirectoryName
+			}
+	}
+
+	func testSkipCode() throws {
+		let config = TestConfig(skipDelimiters: ["////"])
 		let plugin = SkipPlugin(config: config, reader: TestValueReader())
 
 		let contents = """
@@ -38,15 +52,7 @@ AFTER
 	}
 
 	func testDontSkipCode() throws {
-		let configText = """
----
-skipDelimiters:
-- "////"
-"""
-		let data = configText.data(using: .utf8)!
-		let config = try YAMLDecoder().decode(TemplateConfig.self, from: data)
-		XCTAssertEqual(config.skipDelimiters.first, "////")
-
+		let config = TestConfig(skipDelimiters: ["////"])
 		let plugin = SkipPlugin(config: config, reader: TestValueReader())
 
 		let contents = """
@@ -70,15 +76,7 @@ AFTER
 	}
 
 	func testIndentedDelimiterIsSupported() throws {
-		let configText = """
----
-skipDelimiters:
-  - "//##"
-"""
-		let data = configText.data(using: .utf8)!
-		let config = try YAMLDecoder().decode(TemplateConfig.self, from: data)
-		XCTAssertEqual(config.skipDelimiters.first, "//##")
-
+		let config = TestConfig(skipDelimiters: ["//##"])
 		let plugin = SkipPlugin(config: config, reader: TestValueReader())
 
 		let contents = """
@@ -100,15 +98,7 @@ skipDelimiters:
 	}
 
 	func testCodeIndentIsKept() throws {
-		let configText = """
----
-skipDelimiters:
-- "//##"
-"""
-		let data = configText.data(using: .utf8)!
-		let config = try YAMLDecoder().decode(TemplateConfig.self, from: data)
-		XCTAssertEqual(config.skipDelimiters.first, "//##")
-
+		let config = TestConfig(skipDelimiters: ["//##"])
 		let plugin = SkipPlugin(config: config, reader: TestValueReader())
 
 		let contents = """

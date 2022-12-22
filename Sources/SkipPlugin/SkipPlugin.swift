@@ -1,6 +1,7 @@
 import Foundation
 import GenCommon
 import Regex
+import TemplateConfig
 import ValueReader
 
 public class SkipPlugin: GeneratorPlugin {

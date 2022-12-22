@@ -33,6 +33,8 @@ let package = Package(
 				"FillVariablesPlugin",
 				"IgnorePlugin",
 				"SkipPlugin",
+				"TemplateConfig",
+				"TemplateConfigLoader",
 				"ValueReader",
 				// libs
 				"Files",
@@ -44,6 +46,7 @@ let package = Package(
 			dependencies: [
 				// internal
 				"GenCommon",
+				"TemplateConfig",
 				"ValueReader",
 				// libs
 				"Files",
@@ -54,6 +57,7 @@ let package = Package(
 			dependencies: [
 				// internal
 				"GenCommon",
+				"TemplateConfig",
 				// libs
 				"Regex",
 			]),
@@ -62,15 +66,25 @@ let package = Package(
 			dependencies: [
 				// internal
 				"GenCommon",
+				"TemplateConfig",
 				"ValueReader",
 				// libs
 				"Regex",
+			]),
+		.target(name: "TemplateConfig"),
+		.target(
+			name: "TemplateConfigLoader",
+			dependencies: [
+				// internal
+				"TemplateConfig",
+				// libs
+				"DefaultCodable",
+				"Yams",
 			]),
 		.target(
 			name: "GenCommon",
 			dependencies: [
 				// libs
-				"DefaultCodable",
 				"Files",
 			]),
 		.target(
@@ -80,11 +94,9 @@ let package = Package(
 			name: "SkipPluginTests",
 			dependencies: [
 				// internal
-				"GenCommon",
 				"SkipPlugin",
+				"TemplateConfig",
 				"ValueReader",
-				// libs
-				"Yams",
 			]),
 	]
 )

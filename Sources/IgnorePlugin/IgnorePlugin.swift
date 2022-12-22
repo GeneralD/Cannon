@@ -1,6 +1,7 @@
 import Files
 import GenCommon
 import Regex
+import TemplateConfig
 
 public class IgnorePlugin: GeneratorPlugin {
 	private let ignore: [Regex]

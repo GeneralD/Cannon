@@ -5,6 +5,8 @@ import GenCommon
 import IgnorePlugin
 import SkipPlugin
 import SwiftCLI
+import TemplateConfig
+import TemplateConfigLoader
 import Yams
 
 public class GenCommand: Command {
@@ -61,28 +63,26 @@ private extension GenCommand {
 
 	// MARK: - Load Config File
 
-	func loadConfig() -> TemplateConfig {
+	func loadConfig() -> any TemplateConfig {
+		let loader = TemplateConfigLoader()
+
 		guard let file = inputFolder.files.first(where: { $0.nameExcludingExtension == "config" }) else {
 			stderr <<< "Config file not found in \(inputFolder.name)"
 			stdout <<< "But still ok! We can continue processing..."
-			return .init()
+			return loader.defaultConfig
 		}
 
-		do {
-			switch file.extension {
-			case "yml", "yaml":
-				return try YAMLDecoder().decode(TemplateConfig.self, from: file.read())
-			case "json":
-				return try JSONDecoder().decode(TemplateConfig.self, from: file.read())
-			default:
-				stderr <<< "Incompatible file extension: \(file.name)"
-				stdout <<< "But still ok! We can continue processing..."
-				return .init()
-			}
-		} catch {
+		switch loader.loadConfig(from: file) {
+		case .success(let config):
+			return config
+		case .failure(.incompatibleFileExtension):
+			stderr <<< "Incompatible file extension: \(file.name)"
+			stdout <<< "But still ok! We can continue processing..."
+			return loader.defaultConfig
+		case .failure(.invalidConfigFile):
 			stderr <<< "No valid config file!"
 			stdout <<< "But still ok! We can continue processing..."
-			return .init()
+			return loader.defaultConfig
 		}
 	}
 }

@@ -2,6 +2,7 @@ import Files
 import Foundation
 import GenCommon
 import Regex
+import TemplateConfig
 import ValueReader
 
 public class FillVariablesPlugin: GeneratorPlugin {
