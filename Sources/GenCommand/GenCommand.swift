@@ -9,8 +9,6 @@ import Yams
 
 public class GenCommand: Command {
 
-	public init() {}
-
 	// MARK: - Arguments
 
 	@Param(completion: .filename)
@@ -21,7 +19,12 @@ public class GenCommand: Command {
 
 	// MARK: - Command Implementations
 
-	public let name = "gen"
+	public let name: String
+	public let shortDescription = "Copy a template and fill variables"
+
+	public init(name: String) {
+		self.name = name
+	}
 
 	public func execute() throws {
 		try configureArguments()

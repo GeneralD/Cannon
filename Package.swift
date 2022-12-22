@@ -4,12 +4,12 @@
 import PackageDescription
 
 let package = Package(
-	name: "Cannon",
+	name: "Sutra",
 	platforms: [
 		.macOS(.v12),
 	],
 	products: [
-		.executable(name: "cannon", targets: ["Cannon"]),
+		.executable(name: "sutra", targets: ["Main"]),
 	],
 	dependencies: [
 		.package(url: "https://github.com/gonzalezreal/DefaultCodable", from: "1.2.1"),
@@ -21,7 +21,7 @@ let package = Package(
 	],
 	targets: [
 		.executableTarget(
-			name: "Cannon",
+			name: "Main",
 			dependencies: [
 				"GenCommand",
 			]),
