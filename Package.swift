@@ -23,7 +23,13 @@ let package = Package(
 		.executableTarget(
 			name: "Main",
 			dependencies: [
+				"CompletionCommand",
 				"GenCommand",
+			]),
+		.target(
+			name: "CompletionCommand",
+			dependencies: [
+				"SwiftCLI",
 			]),
 		.target(
 			name: "GenCommand",
@@ -87,9 +93,7 @@ let package = Package(
 				// libs
 				"Files",
 			]),
-		.target(
-			name: "ValueReader"
-		),
+		.target(name: "ValueReader"),
 		.testTarget(
 			name: "SkipPluginTests",
 			dependencies: [
