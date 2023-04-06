@@ -57,6 +57,7 @@ let package = Package(
 				// libs
 				"Files",
 				"Kebab",
+				"Regex",
 			]),
 		.target(
 			name: "IgnorePlugin",
@@ -95,6 +96,14 @@ let package = Package(
 				"Files",
 			]),
 		.target(name: "ValueReader"),
+		.testTarget(
+			name: "FillVariablesPluginTests",
+			dependencies: [
+				// internal
+				"FillVariablesPlugin",
+				"TemplateConfig",
+				"ValueReader",
+			]),
 		.testTarget(
 			name: "SkipPluginTests",
 			dependencies: [

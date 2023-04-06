@@ -1,9 +1,7 @@
 import Foundation
-import GenCommon
 import TemplateConfig
 import ValueReader
 import XCTest
-import Yams
 @testable import SkipPlugin
 
 final class SkipPluginTests: XCTestCase {
@@ -29,6 +27,37 @@ final class SkipPluginTests: XCTestCase {
 			}
 	}
 
+	private class TestValueReader: ValueReader {
+		func read(message: String) -> String {
+			""
+		}
+
+		func readInt(message: String, default: Int?) -> Int {
+			0
+		}
+
+		func readDouble(message: String, default: Double?) -> Double {
+			0
+		}
+
+		func readBool(message: String, default: Bool?) -> Bool {
+			if message.contains("test01") {
+				return true
+			}
+			if message.contains("test02") {
+				return false
+			}
+			if message.contains("test03") {
+				return true
+			}
+			if message.contains("test04") {
+				return false
+			}
+			XCTAssertTrue(false)
+			return false
+		}
+	}
+	
 	func testSkipCode() throws {
 		let config = TestConfig(skipDelimiters: ["////"])
 		let plugin = SkipPlugin(config: config, reader: TestValueReader())
@@ -119,36 +148,5 @@ AFTER
 }
 """
 		)
-	}
-}
-
-private class TestValueReader: ValueReader {
-	func read(message: String) -> String {
-		""
-	}
-
-	func readInt(message: String, default: Int?) -> Int {
-		0
-	}
-
-	func readDouble(message: String, default: Double?) -> Double {
-		0
-	}
-
-	func readBool(message: String, default: Bool?) -> Bool {
-		if message.contains("test01") {
-			return true
-		}
-		if message.contains("test02") {
-			return false
-		}
-		if message.contains("test03") {
-			return true
-		}
-		if message.contains("test04") {
-			return false
-		}
-		XCTAssertTrue(false)
-		return false
 	}
 }
