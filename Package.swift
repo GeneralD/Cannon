@@ -105,6 +105,13 @@ let package = Package(
 				"ValueReader",
 			]),
 		.testTarget(
+			name: "IgnorePluginTests",
+			dependencies: [
+				// internal
+				"IgnorePlugin",
+				"TemplateConfig",
+			]),
+		.testTarget(
 			name: "SkipPluginTests",
 			dependencies: [
 				// internal
