@@ -85,6 +85,7 @@ let package = Package(
 				"TemplateConfig",
 				// libs
 				"DefaultCodable",
+				"Files",
 				"Yams",
 			]),
 		.target(
