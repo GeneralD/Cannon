@@ -1,18 +1,16 @@
 import Files
 import GenCommon
-import Regex
 import TemplateConfig
 
 public class IgnorePlugin: GeneratorPlugin {
-	private let ignore: [Regex]
+	private let ignore: [Regex<AnyRegexOutput>]
 
 	public init(config: TemplateConfig) {
 		ignore = config.ignore
-			.map { "^\($0)$" }
-			.compactMap(\.r)
+			.compactMap { try? Regex("^\($0)$") }
 	}
 
 	public func shouldIgnore(name: String, kind: LocationKind) -> Bool {
-		ignore.contains { $0.matches(name) }
+		ignore.contains(where: name.contains)
 	}
 }

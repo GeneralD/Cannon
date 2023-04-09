@@ -1,7 +1,6 @@
 import Files
 import Foundation
 import GenCommon
-import Regex
 import SwiftCLI
 
 extension Location {

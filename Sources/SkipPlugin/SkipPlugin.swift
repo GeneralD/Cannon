@@ -1,12 +1,12 @@
 import Foundation
 import GenCommon
-import Regex
 import TemplateConfig
 import ValueReader
+import RegexBuilder
 
 public class SkipPlugin: GeneratorPlugin {
-	private let matchKeyGroupName = "code"
-	private let matchCodeGroupName = "key"
+	let keyGroupReference = Reference(Substring.self)
+	let codeGroupReference = Reference(Substring.self)
 
 	private let config: TemplateConfig
 	private let skipManager: SkipManager
@@ -28,19 +28,34 @@ public class SkipPlugin: GeneratorPlugin {
 private extension SkipPlugin {
 	func replace(text: String) throws -> String {
 		variableMatchers.reduce(text) { accum, matcher in
-			matcher.replaceAll(in: accum) { match in
-				guard let key = match.group(named: matchKeyGroupName),
-					  !skipManager.skip(key: key),
-					  let code = match.group(named: matchCodeGroupName) else { return "" }
-				return code
+			accum.replacing(matcher) { match in
+				let key = match[keyGroupReference].description
+				guard !skipManager.skip(key: key) else { return "" }
+				return match[codeGroupReference].description
 			}
 		}
 	}
 
-	func variableMatcher(from delimiter: String) -> Regex? {
-		let escapedDelimiter = ["\\", "*", "+", ".", "?", "{", "}", "(", ")", "[", "]", "^", "$", "-", "|", "/"]
-			.reduce(delimiter) { $0.replacingOccurrences(of: $1, with: "\\\($1)") }
-		let pattern = #"[\t ]*\#(escapedDelimiter) ?(.+?)\r?\n([\S\n\r\t ]+?\r?\n)[\t ]*\#(escapedDelimiter)\r?\n"#
-		return try? Regex(pattern: pattern, options: .default, groupNames: matchKeyGroupName, matchCodeGroupName)
+	func variableMatcher(from delimiter: String) -> Regex<(Substring, Substring, Substring)> {
+		.init {
+			ZeroOrMore(.horizontalWhitespace)
+			delimiter
+			Optionally(" ")
+			Capture(as: keyGroupReference) {
+				OneOrMore(.reluctant) {
+					.anyNonNewline
+				}
+			}
+			CharacterClass.newlineSequence
+			Capture(as: codeGroupReference) {
+				OneOrMore(.reluctant) {
+					.any
+				}
+				CharacterClass.newlineSequence
+			}
+			ZeroOrMore(.horizontalWhitespace)
+			delimiter
+			CharacterClass.newlineSequence
+		}
 	}
 }

@@ -1,12 +1,12 @@
 import Files
 import Foundation
 import GenCommon
-import Regex
 import TemplateConfig
 import ValueReader
+import RegexBuilder
 
 public class FillVariablesPlugin: GeneratorPlugin {
-	private let matchGroupName = "fill"
+	private let fillGroupReference = Reference(Substring.self)
 
 	private let config: TemplateConfig
 	private let variables: VariableManager
@@ -36,15 +36,21 @@ private extension FillVariablesPlugin {
 	func replace(text: String) throws -> String {
 		replacers.reduce(text) { accum, tuple in
 			let (matcher, valueFor) = tuple
-			return matcher.replaceAll(in: accum) { match in
-				match.group(named: matchGroupName).map(valueFor) ?? ""
+			return accum.replacing(matcher) { match in
+				valueFor(match[fillGroupReference].description)
 			}
 		}
 	}
 
-	func variableMatcher(from delimiter: String) -> Regex? {
-		let escapedDelimiter = ["\\", "*", "+", ".", "?", "{", "}", "(", ")", "[", "]", "^", "$", "-", "|", "/"]
-			.reduce(delimiter) { $0.replacingOccurrences(of: $1, with: "\\\($1)") }
-		return try? Regex(pattern: "\(escapedDelimiter)([a-zA-Z\\d \\-_\\|]+?)\(escapedDelimiter)", groupNames: matchGroupName)
+	func variableMatcher(from delimiter: String) -> Regex<(Substring, Substring)> {
+		Regex {
+			delimiter
+			Capture(as: fillGroupReference) {
+				OneOrMore(.reluctant) {
+					CharacterClass(.word, .anyOf(" |-"))
+				}
+			}
+			delimiter
+		}
 	}
 }
